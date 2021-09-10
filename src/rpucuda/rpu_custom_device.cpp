@@ -17,17 +17,57 @@
 #include <iostream>
 #include <limits>
 
+// Coefficient for custom device
+#define COEF_UP_1_A (T)1.0
+#define COEF_UP_1_B (T)1.0
+#define COEF_UP_1_C (T)1.0
+#define COEF_UP_2_A (T)1.0
+#define COEF_UP_2_B (T)1.0
+#define COEF_UP_2_C (T)1.0
+#define COEF_UP_3_A (T)1.0
+#define COEF_UP_3_B (T)1.0
+#define COEF_UP_3_C (T)1.0
+#define COEF_UP_4_A (T)1.0
+#define COEF_UP_4_B (T)1.0
+#define COEF_UP_4_C (T)1.0
+#define COEF_UP_5_A (T)1.0
+#define COEF_UP_5_B (T)1.0
+#define COEF_UP_5_C (T)1.0
+#define COEF_UP_6_A (T)1.0
+#define COEF_UP_6_B (T)1.0
+#define COEF_UP_6_C (T)1.0
+#define COEF_DOWN_1_A (T)1.0
+#define COEF_DOWN_1_B (T)1.0
+#define COEF_DOWN_1_C (T)1.0
+#define COEF_DOWN_2_A (T)1.0
+#define COEF_DOWN_2_B (T)1.0
+#define COEF_DOWN_2_C (T)1.0
+#define COEF_DOWN_3_A (T)1.0
+#define COEF_DOWN_3_B (T)1.0
+#define COEF_DOWN_3_C (T)1.0
+#define COEF_DOWN_4_A (T)1.0
+#define COEF_DOWN_4_B (T)1.0
+#define COEF_DOWN_4_C (T)1.0
+#define COEF_DOWN_5_A (T)1.0
+#define COEF_DOWN_5_B (T)1.0
+#define COEF_DOWN_5_C (T)1.0
+#define COEF_DOWN_6_A (T)1.0
+#define COEF_DOWN_6_B (T)1.0
+#define COEF_DOWN_6_C (T)1.0
+
 namespace RPU {
 
 /********************************************************************************
- * Linear Step RPU Device
+ * Custom RPU Device
  *********************************************************************************/
 
 template <typename T>
-void LinearStepRPUDevice<T>::populate(
-    const LinearStepRPUDeviceMetaParameter<T> &p, RealWorldRNG<T> *rng) {
+void CustomRPUDevice<T>::populate(
+    const CustomRPUDeviceMetaParameter<T> &p, RealWorldRNG<T> *rng) {
 
   PulsedRPUDevice<T>::populate(p, rng); // will clone par
+
+'''
   auto &par = getPar();
 
   for (int i = 0; i < this->d_size_; ++i) {
@@ -61,6 +101,7 @@ void LinearStepRPUDevice<T>::populate(
       }
     }
   }
+'''
 }
 
 template <typename T> void LinearStepRPUDevice<T>::printDP(int x_count, int d_count) const {
@@ -81,9 +122,7 @@ template <typename T> void LinearStepRPUDevice<T>::printDP(int x_count, int d_co
       std::cout << "[<" << this->sup_[i][j].max_bound << ",";
       std::cout << this->sup_[i][j].min_bound << ">,<";
       std::cout << this->sup_[i][j].scale_up << ",";
-      std::cout << this->sup_[i][j].scale_down << ">,<";
-      std::cout << w_slope_up_[i][j] << ",";
-      std::cout << w_slope_down_[i][j] << ">]";
+      std::cout << this->sup_[i][j].scale_down << ">]";
       std::cout.precision(10);
       std::cout << this->sup_[i][j].decay_scale << ", ";
       std::cout.precision(6);
@@ -100,23 +139,57 @@ template <typename T> void LinearStepRPUDevice<T>::printDP(int x_count, int d_co
 
 namespace {
 template <typename T>
-inline void update_once_mult(
+inline void update_once(
     T &w,
     T &w_apparent,
     int &sign,
     T &scale_down,
     T &scale_up,
-    T &slope_down,
-    T &slope_up,
+    // T &slope_down,
+    // T &slope_up,
     T &min_bound,
     T &max_bound,
     const T &dw_min_std,
     const T &write_noise_std,
     RNG<T> *rng) {
   if (sign > 0) {
-    w -= (slope_down * w + scale_down) * ((T)1.0 + dw_min_std * rng->sampleGauss());
+    if (w<-0.4){
+      w -= (COEF_DOWN_1_A*w*w + COEF_DOWN_1_B*w + COEF_DOWN_1_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<-0.2){
+      w -= (COEF_DOWN_2_A*w*w + COEF_DOWN_2_B*w + COEF_DOWN_2_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<0){
+      w -= (COEF_DOWN_3_A*w*w + COEF_DOWN_3_B*w + COEF_DOWN_3_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<0.2){
+      w -= (COEF_DOWN_4_A*w*w + COEF_DOWN_4_B*w + COEF_DOWN_4_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<0.4){
+      w -= (COEF_DOWN_5_A*w*w + COEF_DOWN_5_B*w + COEF_DOWN_5_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else{
+      w -= (COEF_DOWN_6_A*w*w + COEF_DOWN_6_B*w + COEF_DOWN_6_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
   } else {
-    w += (slope_up * w + scale_up) * ((T)1.0 + dw_min_std * rng->sampleGauss());
+    if (w<-0.4){
+      w -= (COEF_UP_1_A*w*w + COEF_UP_1_B*w + COEF_UP_1_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<-0.2){
+      w -= (COEF_UP_2_A*w*w + COEF_UP_2_B*w + COEF_UP_2_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<0){
+      w -= (COEF_UP_3_A*w*w + COEF_UP_3_B*w + COEF_UP_3_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<0.2){
+      w -= (COEF_UP_4_A*w*w + COEF_UP_4_B*w + COEF_UP_4_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else if (w<0.4){
+      w -= (COEF_UP_5_A*w*w + COEF_UP_5_B*w + COEF_UP_5_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
+    else{
+      w -= (COEF_UP_6_A*w*w + COEF_UP_6_B*w + COEF_UP_6_C)*((T)1.0 + dw_min_std * rng->sampleGauss());
+    }
   }
   w = MAX(w, min_bound);
   w = MIN(w, max_bound);
@@ -126,6 +199,7 @@ inline void update_once_mult(
   }
 }
 
+'''
 template <typename T>
 inline void update_once_add(
     T &w,
@@ -152,6 +226,7 @@ inline void update_once_add(
     w_apparent = w + write_noise_std * rng->sampleGauss();
   }
 }
+'''
 } // namespace
 
 template <typename T>
@@ -162,14 +237,18 @@ void LinearStepRPUDevice<T>::doSparseUpdate(
 
   T *scale_down = this->w_scale_down_[i];
   T *scale_up = this->w_scale_up_[i];
-  T *slope_down = w_slope_down_[i];
-  T *slope_up = w_slope_up_[i];
+  // T *slope_down = w_slope_down_[i];
+  // T *slope_up = w_slope_up_[i];
   T *w = par.usesPersistentWeight() ? this->w_persistent_[i] : weights[i];
   T *w_apparent = weights[i];
   T *min_bound = this->w_min_bound_[i];
   T *max_bound = this->w_max_bound_[i];
 
   T write_noise_std = par.getScaledWriteNoise();
+  PULSED_UPDATE_W_LOOP(update_once(
+                             w[j], w_apparent[j], sign, scale_down[j], scale_up[j], min_bound[j], 
+                             max_bound[j], par.dw_min_std, write_noise_std, rng););
+  '''
   if (par.ls_mult_noise) {
     PULSED_UPDATE_W_LOOP(update_once_mult(
                              w[j], w_apparent[j], sign, scale_down[j], scale_up[j], slope_down[j],
@@ -181,6 +260,7 @@ void LinearStepRPUDevice<T>::doSparseUpdate(
                              slope_up[j], min_bound[j], max_bound[j], par.dw_min_std,
                              write_noise_std, rng););
   }
+  '''
 }
 
 template <typename T>
@@ -198,6 +278,10 @@ void LinearStepRPUDevice<T>::doDenseUpdate(T **weights, int *coincidences, RNG<T
   T *max_bound = this->w_max_bound_[0];
   T write_noise_std = par.getScaledWriteNoise();
 
+  PULSED_UPDATE_W_LOOP_DENSE(update_once(
+                             w[j], w_apparent[j], sign, scale_down[j], scale_up[j], min_bound[j], 
+                             max_bound[j], par.dw_min_std, write_noise_std, rng););
+'''
   if (par.ls_mult_noise) {
     PULSED_UPDATE_W_LOOP_DENSE(update_once_mult(
                                    w[j], w_apparent[j], sign, scale_down[j], scale_up[j],
@@ -209,6 +293,7 @@ void LinearStepRPUDevice<T>::doDenseUpdate(T **weights, int *coincidences, RNG<T
                                    slope_down[j], slope_up[j], min_bound[j], max_bound[j],
                                    par.dw_min_std, write_noise_std, rng););
   }
+'''
 }
 
 template class LinearStepRPUDevice<float>;
