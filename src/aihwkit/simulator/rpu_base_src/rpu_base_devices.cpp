@@ -20,6 +20,7 @@ void declare_rpu_devices(py::module &m) {
   using PulsedParam = RPU::PulsedRPUDeviceMetaParameter<T>;
   using ConstantStepParam = RPU::ConstantStepRPUDeviceMetaParameter<T>;
   using LinearStepParam = RPU::LinearStepRPUDeviceMetaParameter<T>;
+  using CustomParam = RPU::CustomRPUDeviceMetaParameter<T>;
   using SoftBoundsParam = RPU::SoftBoundsRPUDeviceMetaParameter<T>;
   using ExpStepParam = RPU::ExpStepRPUDeviceMetaParameter<T>;
   using VectorParam = RPU::VectorRPUDeviceMetaParameter<T>;
@@ -58,14 +59,7 @@ void declare_rpu_devices(py::module &m) {
     }
     RPU::DeviceUpdateType implements() const override {
       PYBIND11_OVERLOAD_PURE(RPU::DeviceUpdateType, SimpleParam, implements, );
-    }
-    RPU::SimpleRPUDevice<T> *
-    createDevice(int x_size, int d_size, RPU::RealWorldRNG<T> *rng) override {
-      PYBIND11_OVERLOAD_PURE(
-          RPU::SimpleRPUDevice<T> *, SimpleParam, createDevice, x_size, d_size, rng);
-    }
-  };
-
+    } PYBIND11_OVERLOAD_PURE
   class PyPulsedBaseParam : public PulsedBaseParam {
   public:
     std::string getName() const override {
@@ -145,6 +139,27 @@ void declare_rpu_devices(py::module &m) {
     }
     T calcWeightGranularity() const override {
       PYBIND11_OVERLOAD(T, LinearStepParam, calcWeightGranularity, );
+    }
+  };
+
+  class PyCustomParam : public CustomParam {
+  public:
+    std::string getName() const override {
+      PYBIND11_OVERLOAD(std::string, CustomParam, getName, );
+    }
+    CustomParam *clone() const override {
+      PYBIND11_OVERLOAD(CustomParam *, CustomParam, clone, );
+    }
+    RPU::DeviceUpdateType implements() const override {
+      PYBIND11_OVERLOAD(RPU::DeviceUpdateType, CustomParam, implements, );
+    }
+    RPU::CustomRPUDevice<T> *
+    createDevice(int x_size, int d_size, RPU::RealWorldRNG<T> *rng) override {
+      PYBIND11_OVERLOAD(
+          RPU::CustomRPUDevice<T> *, CustomParam, createDevice, x_size, d_size, rng);
+    }
+    T calcWeightGranularity() const override {
+      PYBIND11_OVERLOAD(T, CustomParam, calcWeightGranularity, );
     }
   };
 
@@ -449,6 +464,74 @@ void declare_rpu_devices(py::module &m) {
           })
       .def(
           "calc_weight_granularity", &LinearStepParam::calcWeightGranularity,
+          R"pbdoc(
+        Calculates the granularity of the weights (typically ``dw_min``)
+
+        Returns:
+           float: weight granularity
+        )pbdoc");
+
+  py::class_<CustomParam, PyCustomParam, PulsedParam>(
+      m, "CustomResistiveDeviceParameter")
+      .def(py::init<>())
+      .def_readwrite("coeff_up_1_a", &CustomParam::custom_coeff_up_1_a)
+      .def_readwrite("coeff_up_1_b", &CustomParam::custom_coeff_up_1_b)
+      .def_readwrite("coeff_up_1_c", &CustomParam::custom_coeff_up_1_c)
+      .def_readwrite("coeff_up_2_a", &CustomParam::custom_coeff_up_2_a)
+      .def_readwrite("coeff_up_2_b", &CustomParam::custom_coeff_up_2_b)
+      .def_readwrite("coeff_up_2_c", &CustomParam::custom_coeff_up_2_c)
+      .def_readwrite("coeff_up_3_a", &CustomParam::custom_coeff_up_3_a)
+      .def_readwrite("coeff_up_3_b", &CustomParam::custom_coeff_up_3_b)
+      .def_readwrite("coeff_up_3_c", &CustomParam::custom_coeff_up_3_c)
+      .def_readwrite("coeff_up_4_a", &CustomParam::custom_coeff_up_4_a)
+      .def_readwrite("coeff_up_4_b", &CustomParam::custom_coeff_up_4_b)
+      .def_readwrite("coeff_up_4_c", &CustomParam::custom_coeff_up_4_c)
+      .def_readwrite("coeff_up_5_a", &CustomParam::custom_coeff_up_5_a)
+      .def_readwrite("coeff_up_5_b", &CustomParam::custom_coeff_up_5_b)
+      .def_readwrite("coeff_up_5_c", &CustomParam::custom_coeff_up_5_c)
+      .def_readwrite("coeff_up_6_a", &CustomParam::custom_coeff_up_6_a)
+      .def_readwrite("coeff_up_6_b", &CustomParam::custom_coeff_up_6_b)
+      .def_readwrite("coeff_up_6_c", &CustomParam::custom_coeff_up_6_c)
+      .def_readwrite("coeff_down_1_a", &CustomParam::custom_coeff_down_1_a)
+      .def_readwrite("coeff_down_1_b", &CustomParam::custom_coeff_down_1_b)
+      .def_readwrite("coeff_down_1_c", &CustomParam::custom_coeff_down_1_c)
+      .def_readwrite("coeff_down_2_a", &CustomParam::custom_coeff_down_2_a)
+      .def_readwrite("coeff_down_2_b", &CustomParam::custom_coeff_down_2_b)
+      .def_readwrite("coeff_down_2_c", &CustomParam::custom_coeff_down_2_c)
+      .def_readwrite("coeff_down_3_a", &CustomParam::custom_coeff_down_3_a)
+      .def_readwrite("coeff_down_3_b", &CustomParam::custom_coeff_down_3_b)
+      .def_readwrite("coeff_down_3_c", &CustomParam::custom_coeff_down_3_c)
+      .def_readwrite("coeff_down_4_a", &CustomParam::custom_coeff_down_4_a)
+      .def_readwrite("coeff_down_4_b", &CustomParam::custom_coeff_down_4_b)
+      .def_readwrite("coeff_down_4_c", &CustomParam::custom_coeff_down_4_c)
+      .def_readwrite("coeff_down_5_a", &CustomParam::custom_coeff_down_5_a)
+      .def_readwrite("coeff_down_5_b", &CustomParam::custom_coeff_down_5_b)
+      .def_readwrite("coeff_down_5_c", &CustomParam::custom_coeff_down_5_c)
+      .def_readwrite("coeff_down_6_a", &CustomParam::custom_coeff_down_6_a)
+      .def_readwrite("coeff_down_6_b", &CustomParam::custom_coeff_down_6_b)
+      .def_readwrite("coeff_down_6_c", &CustomParam::custom_coeff_down_6_c)
+      .def_readwrite("coeff_up_a_dtod", &CustomParam::custom_coeff_up_a_dtod)
+      .def_readwrite("coeff_up_b_dtod", &CustomParam::custom_coeff_up_b_dtod)
+      .def_readwrite("coeff_up_c_dtod", &CustomParam::custom_coeff_up_c_dtod)
+      .def_readwrite("coeff_down_a_dtod", &CustomParam::custom_coeff_down_a_dtod)
+      .def_readwrite("coeff_down_b_dtod", &CustomParam::custom_coeff_down_b_dtod)
+      .def_readwrite("coeff_down_c_dtod", &CustomParam::custom_coeff_down_c_dtod)
+      .def_readwrite("num_sectors", &CustomParam::custom_num_sectors)
+      // .def_readwrite("gamma_up_dtod", &CustomParam::ls_decrease_up_dtod)
+      // .def_readwrite("gamma_down_dtod", &CustomParam::ls_decrease_down_dtod)
+      // .def_readwrite("allow_increasing", &CustomParam::ls_allow_increasing_slope)
+      // .def_readwrite("mean_bound_reference", &CustomParam::ls_mean_bound_reference)
+      .def_readwrite("write_noise_std", &CustomParam::write_noise_std)
+      // .def_readwrite("mult_noise", &CustomParam::ls_mult_noise)
+      .def(
+          "__str__",
+          [](CustomParam &self) {
+            std::stringstream ss;
+            self.printToStream(ss);
+            return ss.str();
+          })
+      .def(
+          "calc_weight_granularity", &CustomParam::calcWeightGranularity,
           R"pbdoc(
         Calculates the granularity of the weights (typically ``dw_min``)
 
