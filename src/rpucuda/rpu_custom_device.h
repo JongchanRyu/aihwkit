@@ -69,16 +69,16 @@ BUILD_PULSED_DEVICE_META_PARAMETER(
     T custom_coeff_down_c_dtod = (T)0.05;
 
     int custom_num_sectors = 6;
-    '''
-    T ls_decrease_up = (T)0.0;
-    T ls_decrease_down = (T)0.0;
-    T ls_decrease_up_dtod = (T)0.05;
-    T ls_decrease_down_dtod = (T)0.05;
+    // '''
+    // T ls_decrease_up = (T)0.0;
+    // T ls_decrease_down = (T)0.0;
+    // T ls_decrease_up_dtod = (T)0.05;
+    // T ls_decrease_down_dtod = (T)0.05;
 
-    bool ls_allow_increasing_slope = false;
-    bool ls_mean_bound_reference = true;
-    bool ls_mult_noise = true;
-    '''
+    // bool ls_allow_increasing_slope = false;
+    // bool ls_mean_bound_reference = true;
+    // bool ls_mult_noise = true;
+    // '''
     ,
     /*print body*/
 
@@ -118,18 +118,18 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
           }
         }
       }
-      '''int x_sz = this->x_size_;
-      int d_sz = this->d_size_;
+      // '''int x_sz = this->x_size_;
+      // int d_sz = this->d_size_;
 
-      w_slope_down_ = Array_2D_Get<T>(d_sz, x_sz);
-      w_slope_up_ = Array_2D_Get<T>(d_sz, x_sz);
+      // w_slope_down_ = Array_2D_Get<T>(d_sz, x_sz);
+      // w_slope_up_ = Array_2D_Get<T>(d_sz, x_sz);
 
-      for (int j = 0; j < x_sz; ++j) {
-        for (int i = 0; i < d_sz; ++i) {
-          w_slope_up_[i][j] = (T)0.0;
-          w_slope_down_[i][j] = (T)0.0;
-        }
-      }'''
+      // for (int j = 0; j < x_sz; ++j) {
+      //   for (int i = 0; i < d_sz; ++i) {
+      //     w_slope_up_[i][j] = (T)0.0;
+      //     w_slope_down_[i][j] = (T)0.0;
+      //   }
+      // }'''
     ,
       /* dtor*/
       Array_3D_Free<T>(coeff_up_a_,d_sz);
@@ -155,12 +155,12 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
           }
         }
       }
-      '''for (int j = 0; j < other.x_size_; ++j) {
-        for (int i = 0; i < other.d_size_; ++i) {
-          w_slope_down_[i][j] = other.w_slope_down_[i][j];
-          w_slope_up_[i][j] = other.w_slope_up_[i][j];
-        }
-      }'''
+      // '''for (int j = 0; j < other.x_size_; ++j) {
+      //   for (int i = 0; i < other.d_size_; ++i) {
+      //     w_slope_down_[i][j] = other.w_slope_down_[i][j];
+      //     w_slope_up_[i][j] = other.w_slope_up_[i][j];
+      //   }
+      // }'''
     ,
       /* move assignment */
       num_sectors_ = other.num_sectors_;
@@ -178,11 +178,11 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
       other.w_coeff_down_b_ = nullptr;
       other.w_coeff_down_c_ = nullptr;
 
-      '''w_slope_down_ = other.w_slope_down_;
-      w_slope_up_ = other.w_slope_up_;
+      // '''w_slope_down_ = other.w_slope_down_;
+      // w_slope_up_ = other.w_slope_up_;
 
-      other.w_slope_down_ = nullptr;
-      other.w_slope_up_ = nullptr;'''
+      // other.w_slope_down_ = nullptr;
+      // other.w_slope_up_ = nullptr;'''
       ,
       /* swap*/
       swap(a.num_sectors_, b.num_sectors_);
@@ -193,8 +193,8 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
       swap(a.w_coeff_down_b_, b.w_coeff_down_b_);
       swap(a.w_coeff_down_c_, b.w_coeff_down_c_);
 
-      '''swap(a.w_slope_up_, b.w_slope_up_);
-      swap(a.w_slope_down_, b.w_slope_down_);'''
+      // '''swap(a.w_slope_up_, b.w_slope_up_);
+      // swap(a.w_slope_down_, b.w_slope_down_);'''
       ,
       /* dp names*/
       names.push_back(std::string("coeff_up_a"));
@@ -204,8 +204,8 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
       names.push_back(std::string("coeff_down_b"));
       names.push_back(std::string("coeff_down_c"));
       // names.push_back(std::string("num_sector"));
-      '''names.push_back(std::string("slope_up"));
-      names.push_back(std::string("slope_down"));'''
+      // '''names.push_back(std::string("slope_up"));
+      // names.push_back(std::string("slope_down"));'''
       ,
       /* dp2vec body*/
       #TODO
@@ -220,13 +220,13 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
         data_ptrs[n_prev + 4][i] = w_coeff_down_b_[0][0][i];
         data_ptrs[n_prev + 5][i] = w_coeff_down_c_[0][0][i];
       }
-      '''int n_prev = (int)names.size();
-      int size = this->x_size_ * this->d_size_;
+      // '''int n_prev = (int)names.size();
+      // int size = this->x_size_ * this->d_size_;
 
-      for (int i = 0; i < size; ++i) {
-        data_ptrs[n_prev][i] = w_slope_up_[0][i];
-        data_ptrs[n_prev + 1][i] = w_slope_down_[0][i];
-      }'''
+      // for (int i = 0; i < size; ++i) {
+      //   data_ptrs[n_prev][i] = w_slope_up_[0][i];
+      //   data_ptrs[n_prev + 1][i] = w_slope_down_[0][i];
+      // }'''
     ,
       /* vec2dp body*/
       int n_prev = (int)names.size();
@@ -240,13 +240,13 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
         w_coeff_down_b_[0][0][i] = data_ptrs[n_prev + 4][i];
         w_coeff_down_c_[0][0][i] = data_ptrs[n_prev + 5][i];
       }
-      '''int n_prev = (int)names.size();
-      int size = this->x_size_ * this->d_size_;
+      // '''int n_prev = (int)names.size();
+      // int size = this->x_size_ * this->d_size_;
 
-      for (int i = 0; i < size; ++i) {
-        w_slope_up_[0][i] = data_ptrs[n_prev][i];
-        w_slope_down_[0][i] = data_ptrs[n_prev + 1][i];
-      }'''
+      // for (int i = 0; i < size; ++i) {
+      //   w_slope_up_[0][i] = data_ptrs[n_prev][i];
+      //   w_slope_down_[0][i] = data_ptrs[n_prev + 1][i];
+      // }'''
     ,
       /*invert copy DP */
       num_sectors_ = rpu->getNumSectors();
@@ -268,25 +268,25 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
           }
         }
       }
-      '''T **slope_down = rpu->getSlopeDown();
-      T **slope_up = rpu->getSlopeUp();
-      for (int j = 0; j < this->x_size_; ++j) {
-        for (int i = 0; i < this->d_size_; ++i) {
-          w_slope_down_[i][j] = -slope_up[i][j];
-          w_slope_up_[i][j] = -slope_down[i][j];
-        }
-      }'''
+      // '''T **slope_down = rpu->getSlopeDown();
+      // T **slope_up = rpu->getSlopeUp();
+      // for (int j = 0; j < this->x_size_; ++j) {
+      //   for (int i = 0; i < this->d_size_; ++i) {
+      //     w_slope_down_[i][j] = -slope_up[i][j];
+      //     w_slope_up_[i][j] = -slope_down[i][j];
+      //   }
+      // }'''
   );
 
   void printDP(int x_count, int d_count) const override;
 
-  inline T **getCoeffUpA() const { return w_coeff_up_a_; };
-  inline T **getCoeffUpB() const { return w_coeff_up_b_; };
-  inline T **getCoeffUpC() const { return w_coeff_up_c_; };
-  inline T **getCoeffDownA() const { return w_coeff_down_a_; };
-  inline T **getCoeffDownB() const { return w_coeff_down_b_; };
-  inline T **getCoeffDownC() const { return w_coeff_down_c_; };
-  inline T **getNumSectors() const { return num_sectors_; };
+  inline T ***getCoeffUpA() const { return w_coeff_up_a_; };
+  inline T ***getCoeffUpB() const { return w_coeff_up_b_; };
+  inline T ***getCoeffUpC() const { return w_coeff_up_c_; };
+  inline T ***getCoeffDownA() const { return w_coeff_down_a_; };
+  inline T ***getCoeffDownB() const { return w_coeff_down_b_; };
+  inline T ***getCoeffDownC() const { return w_coeff_down_c_; };
+  inline T getNumSectors() const { return num_sectors_; };
 //   inline T **getSlopeUp() const { return w_slope_up_; };
 //   inline T **getSlopeDown() const { return w_slope_down_; };
 
