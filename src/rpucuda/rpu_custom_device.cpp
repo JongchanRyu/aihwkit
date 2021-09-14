@@ -38,7 +38,7 @@ void CustomRPUDevice<T>::populate(
     Array_3D_Free<T>(w_coeff_up_b_,this->d_size_);
     Array_3D_Free<T>(w_coeff_up_c_,this->d_size_);
     Array_3D_Free<T>(w_coeff_down_a_,this->d_size_);
-    Array_3D_Free<T>(w_coeff_down_b_,this->d_size_z);
+    Array_3D_Free<T>(w_coeff_down_b_,this->d_size_);
     Array_3D_Free<T>(w_coeff_down_c_,this->d_size_);
     w_coeff_up_a_ = Array_3D_Get<T>(this->d_size_, this->x_size_, num_sectors_);
     w_coeff_up_b_ = Array_3D_Get<T>(this->d_size_, this->x_size_, num_sectors_);
@@ -330,8 +330,8 @@ void CustomRPUDevice<T>::doDenseUpdate(T **weights, int *coincidences, RNG<T> *r
 
   PULSED_UPDATE_W_LOOP_DENSE(update_once(
                              w[j], w_apparent[j], sign, scale_down[j], scale_up[j], 
-                             coeff_up_a_[j], coeff_up_b_[j], coeff_up_c_[j],
-                             coeff_down_a_[j], coeff_down_b_[j], coeff_down_c_[j], this->num_sectors_,
+                             coeff_up_a[j], coeff_up_b[j], coeff_up_c[j],
+                             coeff_down_a[j], coeff_down_b[j], coeff_down_c[j], this->num_sectors_,
                              min_bound[j], max_bound[j], par.dw_min_std, write_noise_std, rng););
 // '''
 //   if (par.ls_mult_noise) {

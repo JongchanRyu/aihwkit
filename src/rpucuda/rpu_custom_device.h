@@ -102,9 +102,9 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
       w_coeff_up_a_ = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
       w_coeff_up_b_ = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
       w_coeff_up_c_ = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
-      w_coeff_down_a = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
-      w_coeff_down_b = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
-      w_coeff_down_c = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
+      w_coeff_down_a_ = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
+      w_coeff_down_b_ = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
+      w_coeff_down_c_ = Array_3D_Get<T>(d_sz, x_sz, num_sectors_);
 
       for (int j = 0; j < x_sz; ++j) {
         for (int i = 0; i < d_sz; ++i) {
@@ -132,12 +132,12 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
       // }'''
     ,
       /* dtor*/
-      Array_3D_Free<T>(coeff_up_a_,d_sz);
-      Array_3D_Free<T>(coeff_up_b_,d_sz);
-      Array_3D_Free<T>(coeff_up_c_,d_sz);
-      Array_3D_Free<T>(coeff_down_a_,d_sz);
-      Array_3D_Free<T>(coeff_down_b_,d_sz);
-      Array_3D_Free<T>(coeff_down_c_,d_sz);
+      Array_3D_Free<T>(w_coeff_up_a_,this->d_size_);
+      Array_3D_Free<T>(w_coeff_up_b_,this->d_size_);
+      Array_3D_Free<T>(w_coeff_up_c_,this->d_size_);
+      Array_3D_Free<T>(w_coeff_down_a_,this->d_size_);
+      Array_3D_Free<T>(w_coeff_down_b_,this->d_size_);
+      Array_3D_Free<T>(w_coeff_down_c_,this->d_size_);
       // Array_2D_Free<T>(w_slope_down_);
       // Array_2D_Free<T>(w_slope_up_);
       ,
@@ -208,7 +208,6 @@ template <typename T> class CustomRPUDevice : public PulsedRPUDevice<T> {
       // names.push_back(std::string("slope_down"));'''
       ,
       /* dp2vec body*/
-      #TODO
       int n_prev = (int)names.size();
       int size = this->x_size_ * this->d_size_ * this->num_sectors_;
 

@@ -14,6 +14,7 @@
 #include "rpu_constantstep_device.h"
 #include "rpu_expstep_device.h"
 #include "rpu_linearstep_device.h"
+#include "rpu_custom_device.h"
 #include "rpu_mixedprec_device.h"
 #include "rpu_mixedprec_device_base.h"
 #include "rpu_onesided_device.h"

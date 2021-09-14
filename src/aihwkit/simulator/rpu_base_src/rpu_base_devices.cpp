@@ -59,7 +59,14 @@ void declare_rpu_devices(py::module &m) {
     }
     RPU::DeviceUpdateType implements() const override {
       PYBIND11_OVERLOAD_PURE(RPU::DeviceUpdateType, SimpleParam, implements, );
-    } PYBIND11_OVERLOAD_PURE
+    } 
+    RPU::SimpleRPUDevice<T> *
+    createDevice(int x_size, int d_size, RPU::RealWorldRNG<T> *rng) override {
+      PYBIND11_OVERLOAD_PURE(
+          RPU::SimpleRPUDevice<T> *, SimpleParam, createDevice, x_size, d_size, rng);
+    }
+  };
+
   class PyPulsedBaseParam : public PulsedBaseParam {
   public:
     std::string getName() const override {
