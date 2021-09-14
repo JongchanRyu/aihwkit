@@ -219,7 +219,7 @@ inline void update_once(
     const T &dw_min_std,
     const T &write_noise_std,
     RNG<T> *rng) {
-  int sector = (int)((w - min_bound - (T)0.000001)/(max_bound - min_bound)*8);
+  int sector = (int)((w - min_bound - (T)0.000001)/(max_bound - min_bound)*num_sectors);
   if (sign > 0) {
     w -= (coeff_down_a[sector]*w*w + coeff_down_b[sector]*w + coeff_down_c[sector])
                                     * ((T)1.0 + dw_min_std * rng->sampleGauss());
