@@ -19,7 +19,7 @@ from aihwkit.simulator.configs.utils import (
 from .helpers.decorators import parametrize_over_tiles
 from .helpers.testcases import ParametrizedTestCase
 from .helpers.tiles import (
-    FloatingPoint, Ideal, ConstantStep, LinearStep,
+    FloatingPoint, Ideal, ConstantStep, LinearStep, Custom
     ExpStep, SoftBounds, SoftBoundsPmax, PowStep, Vector, OneSided,
     Transfer, MixedPrecision,
     FloatingPointCuda, IdealCuda, ConstantStepCuda, LinearStepCuda,
@@ -64,6 +64,7 @@ class RPUConfigurationsFloatingPointTest(ParametrizedTestCase):
     ConstantStep,
     LinearStep,
     ExpStep,
+    Custom,
     SoftBounds,
     SoftBoundsPmax,
     PowStep,
