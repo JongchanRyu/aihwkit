@@ -18,6 +18,7 @@
 #include "rpucuda_constantstep_device.h"
 #include "rpucuda_expstep_device.h"
 #include "rpucuda_linearstep_device.h"
+#include "rpucuda_custom_device.h"
 #include "rpucuda_pulsed.h"
 #include "rpucuda_pulsed_device.h"
 #include "utility_functions.h"

@@ -396,6 +396,21 @@ class LinearStepCuda:
         return AnalogTile(out_size, in_size, rpu_config, **kwargs).cuda()
 
 
+class CustomCuda:
+    """AnalogTile with CustomDevice."""
+
+    simulator_tile_class = getattr(tiles, 'CudaAnalogTile', None)
+    first_hidden_field = 'max_bound'
+    use_cuda = True
+
+    def get_rpu_config(self):
+        return SingleRPUConfig(device=CustomDevice(w_max_dtod=0, w_min_dtod=0))
+
+    def get_tile(self, out_size, in_size, rpu_config=None, **kwargs):
+        rpu_config = rpu_config or self.get_rpu_config()
+        return AnalogTile(out_size, in_size, rpu_config, **kwargs).cuda()
+
+
 class SoftBoundsCuda:
     """AnalogTile with SoftBoundsDevice."""
 
