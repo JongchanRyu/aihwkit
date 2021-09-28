@@ -18,34 +18,21 @@ namespace RPU {
 namespace {
 #define UPDATE_ONCE                                                                                \
   {                                                                                                \
-    // T z = 2.0 * w / b_diff * a + b;                                                                \
-    // T y = 1.0 - A * __expf(gamma * z);                                                             \
-    // if (y > 0) {                                                                                   \
-    //   if (noise_std_dw > 0) {                                                                      \
-    //     T stoch_value = curand_normal(&local_state);                                               \
-    //     stoch_value *= noise_std_dw;                                                               \
-    //     w += y * (stoch_value + 1.0) * dw;                                                         \
-    //   } else {                                                                                     \
-    //     w += y * dw;                                                                               \
-    //   }                                                                                            \
-    //   w = (w > wmax) ? wmax : w;                                                                   \
-    //   w = (w < wmin) ? wmin : w;                                                                   \
-    // }
-    
-    int sector = (int)((w - wmin - (T)0.000001)/(wmax - wmin)*num_sectors);
-    T stoch_value = curand_normal(&local_state);                                               \
-    stoch_value *= noise_std_dw;
-    if (!(negative > 0)) { // negative > 0 means sign < 0 and thus up-direction
-        w -= (global_pars[sector*6+3]*w*w + global_pars[sector*6+4]*w + global_pars[sector*6+5])
-                                        * ((T)1.0 + stoch_value);
-    } else {    
-        w += (global_pars[sector*6]*w*w + global_pars[sector*6+1]*w + global_pars[sector*6+2])
-                                        * ((T)1.0 + stoch_value);
-    }
-    w = (w > wmax) ? wmax : w;     
-    w = (w < wmin) ? wmin : w;
+    int sector = (int)((w - wmin - (T)0.000001)/(wmax - wmin)*num_sectors);                        \
+    T stoch_value = curand_normal(&local_state);                                                   \
+    stoch_value *= noise_std_dw;                                                                   \
+    if (!(negative > 0)) {                                                                         \
+        w -= (global_pars[sector*6+3]*w*w + global_pars[sector*6+4]*w + global_pars[sector*6+5])   \
+                                        * ((T)1.0 + stoch_value);                                  \
+    } else {                                                                                       \
+        w += (global_pars[sector*6]*w*w + global_pars[sector*6+1]*w + global_pars[sector*6+2])     \
+                                        * ((T)1.0 + stoch_value);                                  \
+    }                                                                                              \
+    w = (w > wmax) ? wmax : w;                                                                     \
+    w = (w < wmin) ? wmin : w;                                                                     \
 
   }
+    
 
 template <typename T> struct UpdateFunctorCustom {
 
@@ -173,17 +160,17 @@ pwukpvec_t<T> CustomRPUDeviceCuda<T>::getUpdateKernels(
   const auto &pars = getPar();
 
   v.push_back(RPU::make_unique<
-              PWUKernelParameterSingleFunctor<T, UpdateFunctorCustom<T>, 9>>(
+              PWUKernelParameterSingleFunctor<T, UpdateFunctorCustom<T>, 37>>(
       this->context_, this->x_size_, this->d_size_, m_batch, nK32, use_bo64, out_trans, up,
       pars.getName()));
 
   v.push_back(
-      RPU::make_unique<PWUKernelParameterBatchFunctor<T, UpdateFunctorCustom<T>, 9>>(
+      RPU::make_unique<PWUKernelParameterBatchFunctor<T, UpdateFunctorCustom<T>, 37>>(
           this->context_, this->x_size_, this->d_size_, m_batch, nK32, use_bo64, out_trans, up,
           pars.getName()));
 
   v.push_back(RPU::make_unique<
-              PWUKernelParameterBatchSharedFunctor<T, UpdateFunctorCustom<T>, 9>>(
+              PWUKernelParameterBatchSharedFunctor<T, UpdateFunctorCustom<T>, 37>>(
       this->context_, this->x_size_, this->d_size_, m_batch, nK32, use_bo64, out_trans, up,
       pars.getName()));
 
