@@ -26,7 +26,7 @@ public:
       CustomRPUDeviceCuda,
       CustomRPUDevice,
       /*ctor body*/
-      dev_cu_par_ = RPU::make_unique<CudaArray<float>>(this->context_, 32);
+      dev_cu_par_ = RPU::make_unique<CudaArray<float>>(this->context_, this->num_sectors_*6+2);
     //   dev_slope_ = RPU::make_unique<CudaArray<float>>(this->context_, 2 * this->size_);
     //   dev_write_noise_std_ = RPU::make_unique<CudaArray<T>>(this->context_, 1);
       ,
@@ -48,10 +48,7 @@ public:
       //swap(a.dev_write_noise_std_, b.dev_write_noise_std_);
       ,
       /*host copy from cpu (rpu_device). Parent device params are copyied automatically*/
-      int d_size = this->d_size_;
-      int x_size = this->x_size_;
       num_sectors_ = rpu_device.getNumSectors();
-      // RPU_FATAL("giho-for using cuda version custom device you need to configure the number of sectors at most 5");
 
       T ***w_coeff_up_a_ = rpu_device.getCoeffUpA();
       T ***w_coeff_up_b_ = rpu_device.getCoeffUpB();
@@ -64,23 +61,13 @@ public:
 
       tmp_cu_par[0] = (float)rpu_device.getNumSectors();
       tmp_cu_par[1] = getPar().getScaledWriteNoise();
-      for (int i = 0; i < d_size; ++i) {
-        for (int j = 0; j < x_size; ++j) {
-            for (int k = 0; k < num_sectors_; ++k){
-                // int zz = k * (d_size * x_size * 6) 
-                //         + j * (d_size * 6) 
-                //         + i * 6;
-                tmp_cu_par[k*6+2] += w_coeff_up_a_[i][j][k];
-                tmp_cu_par[k*6+1+2] += w_coeff_up_b_[i][j][k];
-                tmp_cu_par[k*6+2+2] += w_coeff_up_c_[i][j][k];
-                tmp_cu_par[k*6+3+2] += w_coeff_down_a_[i][j][k];
-                tmp_cu_par[k*6+4+2] += w_coeff_down_b_[i][j][k];
-                tmp_cu_par[k*6+5+2] += w_coeff_down_c_[i][j][k];
-            }
-        }
-      }
-      for (int i = 2; i < num_sectors_*6 + 2; ++i){
-          tmp_cu_par[i] /= d_size * x_size;
+      for (int k = 0; k < num_sectors_; ++k){
+        tmp_cu_par[k*6+2] = w_coeff_up_a_[0][0][k];
+        tmp_cu_par[k*6+1+2] = w_coeff_up_b_[0][0][k];
+        tmp_cu_par[k*6+2+2] = w_coeff_up_c_[0][0][k];
+        tmp_cu_par[k*6+3+2] = w_coeff_down_a_[0][0][k];
+        tmp_cu_par[k*6+4+2] = w_coeff_down_b_[0][0][k];
+        tmp_cu_par[k*6+5+2] = w_coeff_down_c_[0][0][k];
       }
       dev_cu_par_->assign(tmp_cu_par);
       
@@ -266,3 +253,26 @@ private:
 // };
 
 // } // namespace RPU
+
+
+      // for (int i = 0; i < d_size; ++i) {
+      //   for (int j = 0; j < x_size; ++j) {
+      //       for (int k = 0; k < num_sectors_; ++k){
+      //           // int zz = k * (d_size * x_size * 6) 
+      //           //         + j * (d_size * 6) 
+      //           //         + i * 6;
+      //           tmp_cu_par[k*6+2] = w_coeff_up_a_[0][0][k];
+      //           tmp_cu_par[k*6+1+2] = w_coeff_up_b_[0][0][k];
+      //           tmp_cu_par[k*6+2+2] = w_coeff_up_c_[0][0][k];
+      //           tmp_cu_par[k*6+3+2] = w_coeff_down_a_[0][0][k];
+      //           tmp_cu_par[k*6+4+2] = w_coeff_down_b_[0][0][k];
+      //           tmp_cu_par[k*6+5+2] = w_coeff_down_c_[0][0][k];
+      //       }
+      //   }
+      // }
+      
+      
+// for (int i = 2; i < num_sectors_*6 + 2; ++i){
+//       //     // tmp_cu_par[i] /= d_size * x_size;
+//           std::cout << "i : " << i << " value : " << tmp_cu_par[i] << std::endl;
+//       }
