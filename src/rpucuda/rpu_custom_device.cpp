@@ -55,42 +55,54 @@ void CustomRPUDevice<T>::populate(
   T *coeff_down_b = new T[this->num_sectors_];
   T *coeff_down_c = new T[this->num_sectors_];
 
-  coeff_up_a[0] = par.custom_coeff_up_1_a;
-  coeff_up_b[0] = par.custom_coeff_up_1_b;
-  coeff_up_c[0] = par.custom_coeff_up_1_c;
-  coeff_up_a[1] = par.custom_coeff_up_2_a;
-  coeff_up_b[1] = par.custom_coeff_up_2_b;
-  coeff_up_c[1] = par.custom_coeff_up_2_c;
-  coeff_up_a[2] = par.custom_coeff_up_3_a;
-  coeff_up_b[2] = par.custom_coeff_up_3_b;
-  coeff_up_c[2] = par.custom_coeff_up_3_c;
-  coeff_up_a[3] = par.custom_coeff_up_4_a;
-  coeff_up_b[3] = par.custom_coeff_up_4_b;
-  coeff_up_c[3] = par.custom_coeff_up_4_c;
-  coeff_up_a[4] = par.custom_coeff_up_5_a;
-  coeff_up_b[4] = par.custom_coeff_up_5_b;
-  coeff_up_c[4] = par.custom_coeff_up_5_c;
-  coeff_up_a[5] = par.custom_coeff_up_6_a;
-  coeff_up_b[5] = par.custom_coeff_up_6_b;
-  coeff_up_c[5] = par.custom_coeff_up_6_c;
-  coeff_down_a[0] = par.custom_coeff_down_1_a;
-  coeff_down_b[0] = par.custom_coeff_down_1_b;
-  coeff_down_c[0] = par.custom_coeff_down_1_c;
-  coeff_down_a[1] = par.custom_coeff_down_2_a;
-  coeff_down_b[1] = par.custom_coeff_down_2_b;
-  coeff_down_c[1] = par.custom_coeff_down_2_c;
-  coeff_down_a[2] = par.custom_coeff_down_3_a;
-  coeff_down_b[2] = par.custom_coeff_down_3_b;
-  coeff_down_c[2] = par.custom_coeff_down_3_c;
-  coeff_down_a[3] = par.custom_coeff_down_4_a;
-  coeff_down_b[3] = par.custom_coeff_down_4_b;
-  coeff_down_c[3] = par.custom_coeff_down_4_c;
-  coeff_down_a[4] = par.custom_coeff_down_5_a;
-  coeff_down_b[4] = par.custom_coeff_down_5_b;
-  coeff_down_c[4] = par.custom_coeff_down_5_c;
-  coeff_down_a[5] = par.custom_coeff_down_6_a;
-  coeff_down_b[5] = par.custom_coeff_down_6_b;
-  coeff_down_c[5] = par.custom_coeff_down_6_c;
+  if (this->num_sectors_>0){
+    coeff_up_a[0] = par.custom_coeff_up_1_a;
+    coeff_up_b[0] = par.custom_coeff_up_1_b;
+    coeff_up_c[0] = par.custom_coeff_up_1_c;
+    coeff_down_a[0] = par.custom_coeff_down_1_a;
+    coeff_down_b[0] = par.custom_coeff_down_1_b;
+    coeff_down_c[0] = par.custom_coeff_down_1_c;
+  }
+  if (this->num_sectors_>1){
+    coeff_up_a[1] = par.custom_coeff_up_2_a;
+    coeff_up_b[1] = par.custom_coeff_up_2_b;
+    coeff_up_c[1] = par.custom_coeff_up_2_c;
+    coeff_down_a[1] = par.custom_coeff_down_2_a;
+    coeff_down_b[1] = par.custom_coeff_down_2_b;
+    coeff_down_c[1] = par.custom_coeff_down_2_c;
+  }
+  if (this->num_sectors_>2){
+    coeff_up_a[2] = par.custom_coeff_up_3_a;
+    coeff_up_b[2] = par.custom_coeff_up_3_b;
+    coeff_up_c[2] = par.custom_coeff_up_3_c;
+    coeff_down_a[2] = par.custom_coeff_down_3_a;
+    coeff_down_b[2] = par.custom_coeff_down_3_b;
+    coeff_down_c[2] = par.custom_coeff_down_3_c;
+  }
+  if (this->num_sectors_>3){
+    coeff_up_a[3] = par.custom_coeff_up_4_a;
+    coeff_up_b[3] = par.custom_coeff_up_4_b;
+    coeff_up_c[3] = par.custom_coeff_up_4_c;
+    coeff_down_a[3] = par.custom_coeff_down_4_a;
+    coeff_down_b[3] = par.custom_coeff_down_4_b;
+    coeff_down_c[3] = par.custom_coeff_down_4_c;
+  }
+  if (this->num_sectors_>4){
+    coeff_up_a[4] = par.custom_coeff_up_5_a;
+    coeff_up_b[4] = par.custom_coeff_up_5_b;
+    coeff_up_c[4] = par.custom_coeff_up_5_c;
+    coeff_down_a[4] = par.custom_coeff_down_5_a;
+    coeff_down_b[4] = par.custom_coeff_down_5_b;
+    coeff_down_c[4] = par.custom_coeff_down_5_c;
+  }
+  if (this->num_sectors_>5){
+    coeff_up_a[5] = par.custom_coeff_up_6_a;
+    coeff_up_b[5] = par.custom_coeff_up_6_b;
+    coeff_up_c[5] = par.custom_coeff_up_6_c;
+    coeff_down_a[5] = par.custom_coeff_down_6_a;
+    coeff_down_b[5] = par.custom_coeff_down_6_b;
+    coeff_down_c[5] = par.custom_coeff_down_6_c;
+  }
   
   T coeff_up_a_dtod = par.custom_coeff_up_a_dtod;
   T coeff_up_b_dtod = par.custom_coeff_up_b_dtod;
