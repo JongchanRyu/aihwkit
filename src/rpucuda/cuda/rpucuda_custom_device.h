@@ -27,8 +27,8 @@ public:
       CustomRPUDevice,
       /*ctor body*/
       dev_cu_par_ = RPU::make_unique<CudaArray<float>>(this->context_, this->num_sectors_*6+2);
-    //   dev_slope_ = RPU::make_unique<CudaArray<float>>(this->context_, 2 * this->size_);
-    //   dev_write_noise_std_ = RPU::make_unique<CudaArray<T>>(this->context_, 1);
+      //dev_slope_ = RPU::make_unique<CudaArray<float>>(this->context_, 2 * this->size_);
+      //dev_write_noise_std_ = RPU::make_unique<CudaArray<T>>(this->context_, 1);
       ,
       /*dtor body*/
       ,
