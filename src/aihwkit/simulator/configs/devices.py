@@ -493,6 +493,77 @@ class LinearStepDevice(PulsedDevice):
     :math:`w_\text{apparent}`.
     """
 
+@dataclass
+class CustomDevice(PulsedDevice):
+    r"""CustomDevice
+    
+    fitting data with 2-order functions
+    """
+
+    bindings_class: ClassVar[Type] = devices.CustomResistiveDeviceParameter
+
+    write_noise_std: float = 0.0
+    r"""Whether to use update write noise.
+
+    Whether to use update write noise that is added to the updated
+    devices weight, while the update is done on a hidden persistent weight. The
+    update write noise is then sampled anew when the device is touched
+    again.
+
+    Thus it is:
+
+    .. math::
+        w_\text{apparent}{ij} = w_{ij} + \sigma_\text{write_noise} \Delta w_\text{min}\xi
+
+    and the update is done on :math:`w_{ij}` but the forward sees the
+    :math:`w_\text{apparent}`.
+    """
+
+    coeff_up_1_a: float = 0.00045
+    coeff_up_1_b: float = 0.00333
+    coeff_up_1_c: float = 0.00198
+    coeff_up_2_a: float = 0.00958
+    coeff_up_2_b: float = 0.00961
+    coeff_up_2_c: float = 0.00304
+    coeff_up_3_a: float = 0.00184
+    coeff_up_3_b: float = 0.00692
+    coeff_up_3_c: float = 0.00275
+    coeff_up_4_a: float = 0.00789
+    coeff_up_4_b: float = 0.00705
+    coeff_up_4_c: float = 0.00286
+    coeff_up_5_a: float = 0.00236
+    coeff_up_5_b: float = 0.01056
+    coeff_up_5_c: float = 0.00236
+    coeff_up_6_a: float = 0.00
+    coeff_up_6_b: float = 0.0203
+    coeff_up_6_c: float = -0.00123
+    coeff_down_1_a: float = -0.01975
+    coeff_down_1_b: float = -0.01253
+    coeff_down_1_c: float = -0.00009
+    coeff_down_2_a: float = -0.00906
+    coeff_down_2_b: float = -0.00617
+    coeff_down_2_c: float = 0.00069
+    coeff_down_3_a: float = 0.00006
+    coeff_down_3_b: float = -0.00148
+    coeff_down_3_c: float = 0.00126
+    coeff_down_4_a: float = 0.0006
+    coeff_down_4_b: float = -0.00086
+    coeff_down_4_c: float = 0.00126
+    coeff_down_5_a: float = 0.00028
+    coeff_down_5_b: float = -0.00034
+    coeff_down_5_c: float = 0.00117
+    coeff_down_6_a: float = 0.00171
+    coeff_down_6_b: float = -0.00161
+    coeff_down_6_c: float = +0.00147
+    
+    coeff_up_a_dtod: float = 0.0
+    coeff_up_b_dtod: float = 0.0
+    coeff_up_c_dtod: float = 0.0
+    coeff_down_a_dtod: float = 0.0
+    coeff_down_b_dtod: float = 0.0
+    coeff_down_c_dtod: float = 0.0
+    num_sectors: int = 6
+
 
 @dataclass
 class SoftBoundsDevice(PulsedDevice):
