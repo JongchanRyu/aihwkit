@@ -82,7 +82,6 @@ class TransferCompoundTest(ParametrizedTestCase):
 
             model.analog_tile.set_hidden_parameters(params)
 
-            print(model.analog_tile.tile)
             weight, bias = model.get_weights()
 
             # should be
@@ -99,9 +98,11 @@ class TransferCompoundTest(ParametrizedTestCase):
 
         lifetime = 100.  # initial setting (needs to be larger 1)
         gamma = 0.1
+        reset_bias = 0.1  # decay shift
         rpu_config = self.get_transfer_compound(gamma=gamma,
                                                 lifetime=lifetime,
-                                                lifetime_dtod=0.0)
+                                                lifetime_dtod=0.0,
+                                                reset=reset_bias)
 
         model = self.get_layer(in_features=2, out_features=1, rpu_config=rpu_config)
 
@@ -133,6 +134,11 @@ class TransferCompoundTest(ParametrizedTestCase):
         x_b = Tensor([[0.1, 0.2], [0.2, 0.4]])
         y_b = Tensor([[0.3], [0.6]])
 
+        if self.use_cuda:
+            model = model.cuda()
+            x_b = x_b.cuda()
+            y_b = y_b.cuda()
+
         epochs = 2
         for _ in range(epochs):
             opt.zero_grad()
@@ -145,14 +151,14 @@ class TransferCompoundTest(ParametrizedTestCase):
         weight, bias = model.get_weights()
 
         # reference values
-        a = a * pow(a_dcy, epochs)
-        b = b * pow(b_dcy, epochs)
-        c = c * pow(c_dcy, epochs)
-        d = d * pow(d_dcy, epochs)
+        a = (a - reset_bias) * pow(a_dcy, epochs) + reset_bias
+        b = (b - reset_bias) * pow(b_dcy, epochs) + reset_bias
+        c = (c - reset_bias) * pow(c_dcy, epochs) + reset_bias
+        d = (d - reset_bias) * pow(d_dcy, epochs) + reset_bias
 
         if self.digital_bias:
-            self.assertEqual(bias[0], 0.0)
+            self.assertAlmostEqual(bias[0].item(), 0.0)
         if self.bias and not self.digital_bias:
-            self.assertEqual(bias[0], gamma*(a - b) + c - d)
+            self.assertAlmostEqual(bias[0].item(), gamma*(a - b) + c - d, 5)
 
-        self.assertEqual(weight[0][0], gamma*(a - b) + c - d)
+        self.assertAlmostEqual(weight[0][0].item(), gamma*(a - b) + c - d, 5)

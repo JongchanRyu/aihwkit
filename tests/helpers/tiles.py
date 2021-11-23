@@ -66,7 +66,10 @@ class Ideal:
     use_cuda = False
 
     def get_rpu_config(self):
-        return SingleRPUConfig(device=IdealDevice())
+        rpu_config = SingleRPUConfig(device=IdealDevice())
+        rpu_config.forward.is_perfect = True
+        rpu_config.backward.is_perfect = True
+        return rpu_config
 
     def get_tile(self, out_size, in_size, rpu_config=None, **kwargs):
         rpu_config = rpu_config or self.get_rpu_config()
@@ -363,7 +366,10 @@ class IdealCuda:
     use_cuda = True
 
     def get_rpu_config(self):
-        return SingleRPUConfig(device=IdealDevice())
+        rpu_config = SingleRPUConfig(device=IdealDevice())
+        rpu_config.forward.is_perfect = True
+        rpu_config.backward.is_perfect = True
+        return rpu_config
 
     def get_tile(self, out_size, in_size, rpu_config=None, **kwargs):
         rpu_config = rpu_config or self.get_rpu_config()
