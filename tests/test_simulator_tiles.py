@@ -25,7 +25,7 @@ from aihwkit.simulator.configs import UnitCellRPUConfig
 from .helpers.decorators import parametrize_over_tiles
 from .helpers.testcases import ParametrizedTestCase
 from .helpers.tiles import (
-    FloatingPoint, Ideal, ConstantStep, LinearStep, SoftBounds,
+    FloatingPoint, Ideal, ConstantStep, LinearStep, Custom, SoftBounds,
     ExpStep, Vector, OneSided, Transfer, BufferedTransfer, MixedPrecision,
     Inference, Reference, FloatingPointCuda, IdealCuda, ConstantStepCuda,
     LinearStepCuda, SoftBoundsCuda, ExpStepCuda, VectorCuda, OneSidedCuda,
@@ -39,6 +39,7 @@ from .helpers.tiles import (
     Ideal,
     ConstantStep,
     LinearStep,
+    Custom,
     ExpStep,
     SoftBounds,
     Vector,
